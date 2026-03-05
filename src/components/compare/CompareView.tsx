@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import { MECHANISMS, MechanismKey } from "@/lib/mechanisms";
 import { getActiveRow } from "@/lib/attention-logic";
 import AttentionGrid from "@/components/AttentionGrid";
@@ -323,9 +324,9 @@ export default function CompareView() {
 
         {/* Back link */}
         <div style={{ marginBottom: 36 }}>
-          <a href="/" style={{ ...mono, fontSize: 12, color: "#475569", textDecoration: "none", letterSpacing: "0.08em" }}>
+          <Link href="/" style={{ ...mono, fontSize: 12, color: "#475569", textDecoration: "none", letterSpacing: "0.08em" }}>
             ← Back to explorer
-          </a>
+          </Link>
         </div>
 
         {/* Centered title */}
