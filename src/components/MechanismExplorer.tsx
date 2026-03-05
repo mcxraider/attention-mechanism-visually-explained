@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { MECHANISMS } from "@/lib/mechanisms";
 import type { MechanismKey } from "@/lib/mechanisms";
 import { getActiveRow } from "@/lib/attention-logic";
@@ -20,12 +20,28 @@ export default function MechanismExplorer() {
   const activeRow = getActiveRow(active, clampedStep);
   const tabs = Object.entries(MECHANISMS) as [MechanismKey, typeof mech][];
 
-  useEffect(() => { setStep(0); setPlaying(false); }, [active]);
+  const stepRef = useRef(step);
+  const cycleCountRef = useRef(0);
+  stepRef.current = step;
+
+  useEffect(() => { setStep(0); setPlaying(false); cycleCountRef.current = 0; }, [active]);
 
   useEffect(() => {
     if (!playing) return;
+    cycleCountRef.current = 0;
     const id = setInterval(() => {
-      setStep(s => s >= maxStep ? 0 : s + 1);
+      if (stepRef.current >= maxStep) {
+        cycleCountRef.current += 1;
+        if (cycleCountRef.current >= 7) {
+          clearInterval(id);
+          setPlaying(false);
+          setStep(0);
+          return;
+        }
+        setStep(0);
+      } else {
+        setStep(s => s + 1);
+      }
     }, 1200);
     return () => clearInterval(id);
   }, [playing, maxStep]);

@@ -264,41 +264,82 @@ export default function CompareView() {
   const mA = MECHANISMS[mechA];
   const mB = MECHANISMS[mechB];
 
-  // Refs so the sync interval can read current steps without stale closures
+  // Refs so intervals can read current steps without stale closures
   const stepARef = useRef(stepA);
   const stepBRef = useRef(stepB);
   stepARef.current = stepA;
   stepBRef.current = stepB;
 
-  useEffect(() => { setStepA(0); setPlayingA(false); setSyncPlaying(false); }, [mechA]);
-  useEffect(() => { setStepB(0); setPlayingB(false); setSyncPlaying(false); }, [mechB]);
+  // Cycle counters — each play mode gets its own
+  const cycleCountARef = useRef(0);
+  const cycleCountBRef = useRef(0);
+  const syncCycleCountRef = useRef(0);
 
-  // Individual play intervals (only run when syncPlaying is off)
+  useEffect(() => { setStepA(0); setPlayingA(false); setSyncPlaying(false); cycleCountARef.current = 0; }, [mechA]);
+  useEffect(() => { setStepB(0); setPlayingB(false); setSyncPlaying(false); cycleCountBRef.current = 0; }, [mechB]);
+
+  // Individual play for A (stops after 7 cycles)
   useEffect(() => {
     if (!playingA || syncPlaying) return;
+    cycleCountARef.current = 0;
     const maxStep = mA.steps.length - 1;
-    const id = setInterval(() => setStepA(s => s >= maxStep ? 0 : s + 1), 1200);
+    const id = setInterval(() => {
+      if (stepARef.current >= maxStep) {
+        cycleCountARef.current += 1;
+        if (cycleCountARef.current >= 7) {
+          clearInterval(id);
+          setPlayingA(false);
+          setStepA(0);
+          return;
+        }
+        setStepA(0);
+      } else {
+        setStepA(s => s + 1);
+      }
+    }, 1200);
     return () => clearInterval(id);
   }, [playingA, syncPlaying, mA.steps.length]);
 
+  // Individual play for B (stops after 7 cycles)
   useEffect(() => {
     if (!playingB || syncPlaying) return;
+    cycleCountBRef.current = 0;
     const maxStep = mB.steps.length - 1;
-    const id = setInterval(() => setStepB(s => s >= maxStep ? 0 : s + 1), 1200);
+    const id = setInterval(() => {
+      if (stepBRef.current >= maxStep) {
+        cycleCountBRef.current += 1;
+        if (cycleCountBRef.current >= 7) {
+          clearInterval(id);
+          setPlayingB(false);
+          setStepB(0);
+          return;
+        }
+        setStepB(0);
+      } else {
+        setStepB(s => s + 1);
+      }
+    }, 1200);
     return () => clearInterval(id);
   }, [playingB, syncPlaying, mB.steps.length]);
 
-  // Sync interval: both advance together; shorter one waits at its last step
-  // until the longer one finishes, then both reset and loop
+  // Sync interval: both advance together; shorter one waits; stops after 7 joint cycles
   useEffect(() => {
     if (!syncPlaying) return;
+    syncCycleCountRef.current = 0;
     const maxA = mA.steps.length - 1;
     const maxB = mB.steps.length - 1;
     const id = setInterval(() => {
       const a = stepARef.current;
       const b = stepBRef.current;
       if (a >= maxA && b >= maxB) {
-        // Both finished — reset and start next cycle
+        syncCycleCountRef.current += 1;
+        if (syncCycleCountRef.current >= 7) {
+          clearInterval(id);
+          setSyncPlaying(false);
+          setStepA(0);
+          setStepB(0);
+          return;
+        }
         setStepA(0);
         setStepB(0);
       } else {
