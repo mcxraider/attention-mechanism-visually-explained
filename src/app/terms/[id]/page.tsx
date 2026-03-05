@@ -1,3 +1,15 @@
+import { MECHANISMS } from "@/lib/mechanisms";
+
+export function generateStaticParams() {
+  const slugs = new Set<string>();
+  for (const mech of Object.values(MECHANISMS)) {
+    for (const { term } of mech.keyTerms) {
+      slugs.add(term.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""));
+    }
+  }
+  return Array.from(slugs).map(id => ({ id }));
+}
+
 export default async function TermPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   return (
