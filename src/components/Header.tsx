@@ -39,6 +39,8 @@ function arrowHead(to: number, color: string, opacity: number) {
   );
 }
 
+import Link from "next/link";
+
 export default function Header() {
   return (
     <div style={{ textAlign: "center", marginBottom: 45 }}>
@@ -111,7 +113,7 @@ export default function Header() {
 
       {/* Compare link */}
       <div>
-        <a
+        <Link
           href="/compare?a=flash&b=paged"
           style={{
             display: "inline-block",
@@ -136,7 +138,7 @@ export default function Header() {
           }}
         >
           ⇄ Compare mechanisms
-        </a>
+        </Link>
       </div>
     </div>
   );
