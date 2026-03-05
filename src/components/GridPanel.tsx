@@ -66,7 +66,7 @@ export default function GridPanel({ mech, active, step, playing, activeRow, onPr
         }}>
           ↑ Queries ↑
         </div>
-        <AttentionGrid type={active} step={step} color={mech.color} size={GRID} activeRow={activeRow} />
+        <AttentionGrid type={active} step={step} color={mech.color} size={GRID} activeRow={activeRow} cellSize={30} />
       </div>
 
       <div style={{ textAlign: "center", fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: "#334155" }}>

@@ -8,6 +8,7 @@ export interface Mechanism {
   complexity: string; level: Level; analogy: string;
   whatIs: string; keyTerms: KeyTerm[]; tradeoff: string;
   usedIn: string; steps: Step[];
+  solves: string; mechanismDesc: string; mathOutput: string; usedDuring: string;
 }
 
 export const MECHANISMS: Record<MechanismKey, Mechanism> = {
@@ -26,11 +27,20 @@ export const MECHANISMS: Record<MechanismKey, Mechanism> = {
     ],
     tradeoff: "Perfect information — every word can influence every other. But memory and compute scale as O(N²). A 10× longer document costs 100× more. Fine for short sequences, prohibitive for long ones.",
     usedIn: "Original Transformer, BERT, GPT-2",
+    solves: "Baseline reference",
+    mechanismDesc: "Full N×N score matrix",
+    mathOutput: "Exact output",
+    usedDuring: "Training, research",
     steps: [
       { label: "Query 0 scans all tokens", desc: "Row 0 (Query 0) attends to all N tokens. Each lit cell = one attention score computed between this query and a key." },
-      { label: "Query 1 scans all tokens", desc: "Row 1 (Query 1) independently scores all N keys. Each query does its own full scan." },
-      { label: "Query 2 scans all tokens", desc: "Row 2 continues the pattern. Every query must compare itself to every key token." },
-      { label: "Full N×N matrix complete", desc: "All queries done — the complete N×N attention matrix. Every token pair has a score. This is why dense attention is O(N²): N queries × N keys." },
+      { label: "Query 1 scans all tokens", desc: "Row 1 (Query 1) independently scores all N keys. Each query does its own full scan — no sharing with other queries." },
+      { label: "Query 2 scans all tokens", desc: "Row 2 continues the pattern. Every query must compare itself to every key token — there are no shortcuts." },
+      { label: "Query 3 scans all tokens", desc: "Row 3 — same process repeats. N queries × N keys means every row must be fully computed, regardless of sequence length." },
+      { label: "Query 4 scans all tokens", desc: "Row 4. Halfway through. At N=8 that's 64 scores. Scale to N=1000 and you need 1,000,000 — the O(N²) cost is clear." },
+      { label: "Query 5 scans all tokens", desc: "Row 5 — each new query adds another N operations regardless of what came before. No reuse is possible." },
+      { label: "Query 6 scans all tokens", desc: "Row 6. Every cell must be computed and stored in memory. This is why dense attention can't scale to long sequences." },
+      { label: "Query 7 scans all tokens", desc: "Row 7 — the final query. All N queries have now each scanned all N keys to produce their attention scores." },
+      { label: "Full N×N matrix complete", desc: "All queries done — the complete N×N attention matrix. Every token pair has a score. This is exactly why dense attention is O(N²)." },
     ],
   },
   linear: {
@@ -48,6 +58,10 @@ export const MECHANISMS: Record<MechanismKey, Mechanism> = {
     ],
     tradeoff: "Much cheaper for long sequences. But the approximation loses some expressiveness — the model can't represent arbitrary attention patterns as precisely. Quality slightly below dense for tasks requiring precise long-range matching.",
     usedIn: "Performer, cosFormer, RWKV",
+    solves: "Quadratic memory/compute",
+    mechanismDesc: "Kernel feature map trick",
+    mathOutput: "Approximate",
+    usedDuring: "Long-doc tasks",
     steps: [
       { label: "Accumulate K→V context", desc: "Keys and Values are multiplied to form a small d×d context matrix (shown as 2 columns). Each token updates this running summary — no N×N matrix ever materialised." },
       { label: "All queries read from context", desc: "Every query vector multiplies against the same d×d context matrix. All N queries use the same 2 context columns — not pairwise scores. This is why linear attention is O(N), not O(N²)." },
@@ -68,6 +82,10 @@ export const MECHANISMS: Record<MechanismKey, Mechanism> = {
     ],
     tradeoff: "O(N√N) or O(N log N) complexity — dramatically cheaper than dense for long sequences. Risk: if important relationships fall outside the chosen sparse pattern, they're missed entirely.",
     usedIn: "Sparse Transformer (OpenAI), BigBird, Longformer",
+    solves: "Memory & compute waste",
+    mechanismDesc: "Global + local + strided",
+    mathOutput: "Approximate",
+    usedDuring: "Long-sequence models",
     steps: [
       { label: "Global tokens", desc: "Row 0 and col 0 = global tokens. They attend to AND are attended by every other token. This gives all-to-all information flow through a single hub." },
       { label: "+ Local neighbors", desc: "Each token also attends to its immediate neighbors (±1 position). Self-attention on the diagonal captures the current token's own context." },
@@ -90,6 +108,10 @@ export const MECHANISMS: Record<MechanismKey, Mechanism> = {
     ],
     tradeoff: "Mathematically identical output to dense attention — zero quality loss. 2-4× faster training, O(N) memory instead of O(N²). The only downside is complex GPU kernel implementation.",
     usedIn: "GPT-4, LLaMA 2/3, Mistral, most modern LLMs",
+    solves: "Slow HBM memory I/O",
+    mechanismDesc: "Tiled SRAM block computation",
+    mathOutput: "Identical to dense ✓",
+    usedDuring: "Training & prefill speed",
     steps: [
       { label: "Tile (0,0) → SRAM", desc: "Rows 0–3, cols 0–3 loaded into fast SRAM. Attention scores computed entirely on-chip. Running softmax stats (max value, normalisation sum) initialised." },
       { label: "Tile (0,1) → SRAM", desc: "Rows 0–3, cols 4–7. Previous softmax stats carried forward and updated. Output for these rows partially accumulated. Still no full matrix in HBM." },
@@ -113,11 +135,15 @@ export const MECHANISMS: Record<MechanismKey, Mechanism> = {
     ],
     tradeoff: "Near-zero memory waste (less than 4% fragmentation vs 60-80% with naive allocation). Enables much larger batch sizes and higher GPU utilisation during serving. No quality change — same computation, different memory layout.",
     usedIn: "vLLM (the primary inference serving engine), TensorRT-LLM",
+    solves: "KV cache fragmentation",
+    mechanismDesc: "Non-contiguous page table for KV cache",
+    mathOutput: "Identical to dense ✓",
+    usedDuring: "Inference serving (batching)",
     steps: [
-      { label: "Page 0: tokens 0–1", desc: "First physical block allocated for this request's KV cache. Block holds Keys and Values for tokens 0–1. Page table entry: logical[0] → physical block A." },
-      { label: "Page 1: tokens 4–5", desc: "Block B assigned for tokens 4–5 of a different request. Non-contiguous in memory — no wasted pre-allocated space between them." },
-      { label: "Page 2: tokens 2–3 (new request)", desc: "A new request gets block C for its first tokens. The page table handles the indirection — attention kernel just follows the table to find the right physical blocks." },
-      { label: "Page 3: tokens 6–7", desc: "As sequence grows, a new free block is assigned. Memory only allocated when actually needed — no worst-case pre-allocation." },
+      { label: "Block A allocated: tokens 0–1", desc: "First physical block allocated on-demand for this request's KV cache. Holds Keys and Values for tokens 0–1. Page table: logical[0] → block A." },
+      { label: "Block B allocated: tokens 4–5", desc: "Block B is assigned for a different request's tokens 4–5. It sits at a completely different physical address — non-contiguous by design. No gaps wasted between A and B." },
+      { label: "Block C allocated: tokens 2–3", desc: "A new request gets block C for its first two tokens. Three blocks are now live across two requests — the page table tracks each mapping independently." },
+      { label: "Block D allocated: tokens 6–7", desc: "As the first request grows, block D is appended. All four non-contiguous blocks are now in use. Near-zero fragmentation — memory is only allocated when a token actually arrives." },
     ],
   },
   local: {
@@ -136,11 +162,16 @@ export const MECHANISMS: Record<MechanismKey, Mechanism> = {
     ],
     tradeoff: "O(N·w) complexity — linear in sequence length for fixed window size. Great for very long documents. Limitation: direct long-range dependencies require many layers to propagate. A word at position 1 can only reach position 1000 in ⌈1000/w⌉ layers.",
     usedIn: "Longformer, BigBird, Mistral (grouped-query variant), Gemma",
+    solves: "Full attention cost",
+    mechanismDesc: "Sliding window of fixed width w",
+    mathOutput: "Approximate (local)",
+    usedDuring: "Streaming, audio, sliding context",
     steps: [
-      { label: "Window on tokens 0–1", desc: "Tokens 0–1 look at their neighborhood (±2 positions). Only a small band near the diagonal is computed for this window." },
-      { label: "Window slides to tokens 3–4", desc: "The window moves right. Tokens 3–4 attend to their local context. Tokens outside the window are invisible." },
-      { label: "Window slides to tokens 5–6", desc: "Window continues sliding. Each token only ever computes w attention scores — not N." },
-      { label: "Full diagonal band", desc: "All windows together form the diagonal band. O(N·w) total — linear in N for fixed window size w, not O(N²)." },
+      { label: "Window on tokens 0–1", desc: "Tokens 0–1 look at their neighborhood (±2 positions). Only a small band near the diagonal is computed — tokens further away are invisible." },
+      { label: "Window slides to tokens 2–3", desc: "The window moves right. Tokens 2–3 attend to their local context. The window width w stays fixed regardless of sequence length." },
+      { label: "Window slides to tokens 4–5", desc: "Tokens 4–5 attend to their neighbors. Each token only ever computes w scores — not N. No token sees the full sequence." },
+      { label: "Window slides to tokens 6–7", desc: "Final window position. Token 7 attends only to its left neighbors. The entire sequence has now been covered by the sliding window." },
+      { label: "Full diagonal band", desc: "All windows together form the diagonal band. O(N·w) total — linear in N for a fixed window size w, not O(N²)." },
     ],
   },
 };

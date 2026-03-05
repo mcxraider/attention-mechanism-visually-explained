@@ -3,9 +3,7 @@ import type { MechanismKey } from "./mechanisms";
 export function isActive(r: number, c: number, type: MechanismKey, step: number): boolean {
   switch (type) {
     case "dense":
-      if (step === 0) return r === 0;
-      if (step === 1) return r === 1;
-      if (step === 2) return r === 2;
+      if (step < 8) return r === step;
       return true;
 
     case "linear":
@@ -38,15 +36,19 @@ export function isActive(r: number, c: number, type: MechanismKey, step: number)
         [[2,6],[2,7],[3,6],[3,7]],
         [[6,2],[6,3],[7,2],[7,3]],
       ];
-      const activePage = pages[step % pages.length];
-      return activePage.some(([pr, pc]) => pr === r && pc === c);
+      // Show all pages allocated so far (cumulative)
+      for (let p = 0; p <= Math.min(step, pages.length - 1); p++) {
+        if (pages[p].some(([pr, pc]) => pr === r && pc === c)) return true;
+      }
+      return false;
     }
 
     case "local": {
       const windowSize = 2;
       if (step === 0) return r <= 1 && Math.abs(r - c) <= windowSize;
-      if (step === 1) return r >= 3 && r <= 4 && Math.abs(r - c) <= windowSize;
-      if (step === 2) return r >= 5 && r <= 6 && Math.abs(r - c) <= windowSize;
+      if (step === 1) return r >= 2 && r <= 3 && Math.abs(r - c) <= windowSize;
+      if (step === 2) return r >= 4 && r <= 5 && Math.abs(r - c) <= windowSize;
+      if (step === 3) return r >= 6 && r <= 7 && Math.abs(r - c) <= windowSize;
       return Math.abs(r - c) <= windowSize;
     }
 
@@ -56,11 +58,12 @@ export function isActive(r: number, c: number, type: MechanismKey, step: number)
 }
 
 export function getActiveRow(type: MechanismKey, step: number): number | null {
-  if (type === "dense" && step < 3) return step;
+  if (type === "dense" && step < 8) return step;
   if (type === "local") {
     if (step === 0) return 0;
-    if (step === 1) return 3;
-    if (step === 2) return 5;
+    if (step === 1) return 2;
+    if (step === 2) return 4;
+    if (step === 3) return 6;
   }
   if (type === "sparse" && step === 0) return 0;
   return null;

@@ -7,9 +7,10 @@ interface Props {
   color: string;
   size?: number;
   activeRow?: number | null;
+  cellSize?: number;
 }
 
-export default function AttentionGrid({ type, step, color, size = 8, activeRow = null }: Props) {
+export default function AttentionGrid({ type, step, color, size = 8, activeRow = null, cellSize = 20 }: Props) {
   return (
     <div style={{
       display: "grid",
@@ -27,7 +28,7 @@ export default function AttentionGrid({ type, step, color, size = 8, activeRow =
         const isHighlightedRow = activeRow !== null && r === activeRow;
         return (
           <div key={i} style={{
-            width: 20, height: 20,
+            width: cellSize, height: cellSize,
             borderRadius: 2,
             background: active ? color : (isHighlightedRow ? "#1a3a5c" : "#0f1f35"),
             opacity: active ? (isHighlightedRow ? 1.0 : 0.9) : (isHighlightedRow ? 0.5 : 0.25),

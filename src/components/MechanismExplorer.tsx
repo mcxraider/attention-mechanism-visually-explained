@@ -17,7 +17,8 @@ export default function MechanismExplorer() {
 
   const mech = MECHANISMS[active];
   const maxStep = mech.steps.length - 1;
-  const activeRow = getActiveRow(active, step);
+  const clampedStep = Math.min(step, maxStep);
+  const activeRow = getActiveRow(active, clampedStep);
   const tabs = Object.entries(MECHANISMS) as [MechanismKey, typeof mech][];
 
   useEffect(() => { setStep(0); setPlaying(false); }, [active]);
@@ -61,7 +62,7 @@ export default function MechanismExplorer() {
         <GridPanel
           mech={mech}
           active={active}
-          step={step}
+          step={clampedStep}
           playing={playing}
           activeRow={activeRow}
           onPrev={handlePrev}
