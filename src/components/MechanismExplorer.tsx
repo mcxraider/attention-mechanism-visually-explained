@@ -5,7 +5,6 @@ import { MECHANISMS } from "@/lib/mechanisms";
 import type { MechanismKey } from "@/lib/mechanisms";
 import { getActiveRow } from "@/lib/attention-logic";
 import Header from "./Header";
-import MechanismTabs from "./MechanismTabs";
 import GridPanel from "./GridPanel";
 import InfoPanel from "./InfoPanel";
 import OverviewGrid from "./OverviewGrid";
@@ -53,12 +52,12 @@ export default function MechanismExplorer() {
       background: "#030b17",
       fontFamily: "'Sora', sans-serif",
       color: "#e2e8f0",
-      padding: "32px 16px 60px",
+      padding: "50px 30px 100px",
     }}>
       <Header />
-      <MechanismTabs tabs={tabs} active={active} onSelect={handleSelect} />
+      <OverviewGrid tabs={tabs} active={active} onSelect={handleSelect} />
 
-      <div className="main-grid" style={{ maxWidth: 780, margin: "0 auto" }}>
+      <div className="main-grid" style={{ maxWidth: 1200, margin: "30px auto 0" }}>
         <GridPanel
           mech={mech}
           active={active}
@@ -72,8 +71,6 @@ export default function MechanismExplorer() {
         />
         <InfoPanel mech={mech} />
       </div>
-
-      <OverviewGrid tabs={tabs} active={active} onSelect={handleSelect} />
     </div>
   );
 }
