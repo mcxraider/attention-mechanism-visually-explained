@@ -2,3 +2,4 @@ plans/*
 .claude/*
 .next/
 node_modules/
+out/

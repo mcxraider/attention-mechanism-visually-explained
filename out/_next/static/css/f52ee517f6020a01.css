@@ -1,1 +1,0 @@
-*,:after,:before{box-sizing:border-box}body{margin:0}.main-grid{display:grid;grid-template-columns:1fr 1fr;grid-gap:20px;gap:20px}@media (max-width:640px){.main-grid{grid-template-columns:1fr}}.overview-grid{display:grid;grid-template-columns:repeat(6,1fr);grid-gap:10px;gap:10px}@media (max-width:640px){.overview-grid{grid-template-columns:repeat(3,1fr)}}
