@@ -77,10 +77,10 @@ export default function ComplexityCharts({
   const gpuKeys = Object.keys(GPU_SPECS) as GPUKey[];
   const isMemory = yAxis === "memory";
 
-  // Explicit decade ticks so log scale is visually clear
-  const LOG_TICKS_MEMORY  = [0.0001, 0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000];
-  const LOG_TICKS_COMPUTE = [0.0001, 0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000, 100000, 1000000];
-  const yTicks = isMemory ? LOG_TICKS_MEMORY : LOG_TICKS_COMPUTE;
+  // Y-axis: linear scale, evenly-spaced ticks (same approach as X-axis)
+  const Y_TICKS_MEMORY  = [0, 2000, 4000, 6000, 8000, 10000];       // GB (0 → 10 TB)
+  const Y_TICKS_COMPUTE = [0, 200000, 400000, 600000, 800000, 1000000]; // GFLOPs
+  const yTicks = isMemory ? Y_TICKS_MEMORY : Y_TICKS_COMPUTE;
   // X-axis: linear scale so proportional distances are shown (10k→100k is 10× wider than 100→1k)
   const X_TICKS = [0, 20000, 40000, 60000, 80000, 100000];
 
@@ -164,22 +164,12 @@ export default function ComplexityCharts({
             }}
           />
           <YAxis
-            scale="log"
-            domain={[0.0001, isMemory ? 10000 : 1000000]}
+            domain={[0, isMemory ? 10000 : 1000000]}
             type="number"
             ticks={yTicks}
             tickFormatter={v => fmt(v, isMemory)}
             tick={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, fill: "#475569" }}
-            width={75}
-            label={{
-              value: "log scale",
-              angle: -90,
-              position: "insideLeft",
-              offset: 10,
-              fill: "#334155",
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: 9,
-            }}
+            width={80}
           />
           <Tooltip content={<ChartTooltip isMemory={isMemory} />} />
           <Legend
