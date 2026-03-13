@@ -5,9 +5,57 @@ interface Props {
   tabs: [MechanismKey, Mechanism][];
   active: MechanismKey;
   onSelect: (key: MechanismKey) => void;
+  vertical?: boolean;
 }
 
-export default function OverviewGrid({ tabs, active, onSelect }: Props) {
+export default function OverviewGrid({ tabs, active, onSelect, vertical }: Props) {
+  if (vertical) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+        {tabs.map(([key, m]) => (
+          <button key={key} onClick={() => onSelect(key)} style={{
+            background: active === key ? m.color + "18" : "#080f1a",
+            border: `1px solid ${active === key ? m.color : "#1e293b"}`,
+            borderRadius: 10,
+            padding: "10px 10px",
+            cursor: "pointer",
+            transition: "all 0.2s",
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            width: "100%",
+            textAlign: "left",
+          }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 2, flexShrink: 0 }}>
+              {Array.from({ length: 16 }).map((_, i) => {
+                const r = Math.floor(i / 4);
+                const c = i % 4;
+                const a = key === "paged"
+                  ? [0, 1, 2, 3].some(s => isActive(r, c, key, s))
+                  : isActive(r, c, key, 0);
+                return (
+                  <div key={i} style={{
+                    width: 7, height: 7, borderRadius: 1,
+                    background: a ? m.color : "#0f1f35",
+                    opacity: a ? 0.85 : 0.2,
+                  }} />
+                );
+              })}
+            </div>
+            <div style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: 11,
+              color: active === key ? m.color : "#475569",
+              lineHeight: 1.2,
+            }}>
+              {m.label.split(" ")[0]}
+            </div>
+          </button>
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div style={{ maxWidth: 1200, margin: "0 auto 40px" }}>
       <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: "#334155", textTransform: "uppercase", letterSpacing: "0.15em", marginBottom: 20, textAlign: "center" }}>

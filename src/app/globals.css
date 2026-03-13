@@ -6,18 +6,6 @@ body {
   margin: 0;
 }
 
-.main-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-
-@media (max-width: 640px) {
-  .main-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
 .overview-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
