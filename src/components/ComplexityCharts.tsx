@@ -81,8 +81,8 @@ export default function ComplexityCharts({
   const LOG_TICKS_MEMORY  = [0.0001, 0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000];
   const LOG_TICKS_COMPUTE = [0.0001, 0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000, 100000, 1000000];
   const yTicks = isMemory ? LOG_TICKS_MEMORY : LOG_TICKS_COMPUTE;
-  // X-axis ticks: each 4× the previous = equal spacing on log scale
-  const X_TICKS = [128, 512, 2048, 8192, 32768, 100000];
+  // X-axis ticks: clean decades = perfectly equal log spacing
+  const X_TICKS = [100, 1000, 10000, 100000];
 
   const controlLabelStyle: React.CSSProperties = {
     fontFamily: "'JetBrains Mono', monospace",
@@ -150,7 +150,7 @@ export default function ComplexityCharts({
           <XAxis
             dataKey="N"
             scale="log"
-            domain={[128, 100000]}
+            domain={[100, 100000]}
             ticks={X_TICKS}
             type="number"
             tickFormatter={v => formatNum(v)}

@@ -71,8 +71,6 @@ export default function MechanismExplorer() {
       color: "#e2e8f0",
       padding: "20px 24px 40px",
     }}>
-      <Header />
-
       <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", gap: 20, alignItems: "flex-start" }}>
         {/* Sidebar: mechanism selector + compare button */}
         <div style={{ width: 150, flexShrink: 0, display: "flex", flexDirection: "column", gap: 12 }}>
@@ -119,8 +117,10 @@ export default function MechanismExplorer() {
           </Link>
         </div>
 
-        {/* Main content: GridPanel + InfoPanel */}
-        <div style={{ flex: 1, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, minWidth: 0 }}>
+        {/* Main content: Header + GridPanel + InfoPanel */}
+        <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 20 }}>
+          <Header />
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
           <GridPanel
             mech={mech}
             active={active}
@@ -133,6 +133,7 @@ export default function MechanismExplorer() {
             onTogglePlay={handleTogglePlay}
           />
           <InfoPanel mech={mech} />
+          </div>
         </div>
       </div>
     </div>
