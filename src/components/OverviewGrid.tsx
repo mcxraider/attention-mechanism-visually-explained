@@ -11,13 +11,13 @@ interface Props {
 export default function OverviewGrid({ tabs, active, onSelect, vertical }: Props) {
   if (vertical) {
     return (
-      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         {tabs.map(([key, m]) => (
           <button key={key} onClick={() => onSelect(key)} style={{
             background: active === key ? m.color + "18" : "#080f1a",
             border: `1px solid ${active === key ? m.color : "#1e293b"}`,
             borderRadius: 10,
-            padding: "10px 10px",
+            padding: "12px 10px",
             cursor: "pointer",
             transition: "all 0.2s",
             display: "flex",
@@ -35,7 +35,7 @@ export default function OverviewGrid({ tabs, active, onSelect, vertical }: Props
                   : isActive(r, c, key, 0);
                 return (
                   <div key={i} style={{
-                    width: 7, height: 7, borderRadius: 1,
+                    width: 8, height: 8, borderRadius: 1,
                     background: a ? m.color : "#0f1f35",
                     opacity: a ? 0.85 : 0.2,
                   }} />

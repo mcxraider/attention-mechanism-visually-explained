@@ -376,7 +376,6 @@ export default function ComplexityCalculator() {
   return (
     <section style={{
       background: "#080f1a",
-      borderTop: "1px solid #1e293b",
       padding: "48px 30px 64px",
       fontFamily: "'Sora', sans-serif",
     }} id="complexity">

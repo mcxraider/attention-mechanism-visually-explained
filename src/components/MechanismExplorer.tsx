@@ -75,7 +75,7 @@ export default function MechanismExplorer() {
 
       <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", gap: 20, alignItems: "flex-start" }}>
         {/* Sidebar: mechanism selector + compare button */}
-        <div style={{ width: 150, flexShrink: 0, display: "flex", flexDirection: "column", gap: 8 }}>
+        <div style={{ width: 150, flexShrink: 0, display: "flex", flexDirection: "column", gap: 12 }}>
           <div style={{
             fontFamily: "'JetBrains Mono', monospace",
             fontSize: 10,
