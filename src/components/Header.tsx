@@ -1,9 +1,9 @@
 const TOKENS = ["A","t","t","e","n","t","i","o","n","·","M","e","c","h","a","n","i","s","m","s"];
 
-const TW = 35;    // token box width
-const TH = 40;    // token box height
-const TG = 5;     // gap between tokens
-const ARC_AREA = 120; // vertical space above tokens for arcs
+const TW = 26;    // token box width
+const TH = 30;    // token box height
+const TG = 4;     // gap between tokens
+const ARC_AREA = 72; // vertical space above tokens for arcs
 const SVG_W = TOKENS.length * (TW + TG) - TG;
 const SVG_H = ARC_AREA + TH;
 
@@ -39,11 +39,9 @@ function arrowHead(to: number, color: string, opacity: number) {
   );
 }
 
-import Link from "next/link";
-
 export default function Header() {
   return (
-    <div style={{ textAlign: "center", marginBottom: 45 }}>
+    <div style={{ textAlign: "center", marginBottom: 20 }}>
       {/* Token arc visualisation */}
       <div style={{ display: "flex", justifyContent: "center", marginBottom: 20, overflowX: "auto" }}>
         <svg
@@ -101,44 +99,14 @@ export default function Header() {
       {/* Explained subtitle */}
       <div style={{
         fontFamily: "'Sora', sans-serif",
-        fontSize: 35,
+        fontSize: 22,
         fontWeight: 300,
         color: "#64748b",
         letterSpacing: "0.18em",
         textTransform: "uppercase",
-        marginBottom: 35,
+        marginBottom: 0,
       }}>
         Explained
-      </div>
-
-      {/* Compare link */}
-      <div>
-        <Link
-          href="/compare?a=flash&b=paged"
-          style={{
-            display: "inline-block",
-            fontFamily: "'JetBrains Mono', monospace",
-            fontSize: 15,
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
-            color: "#94a3b8",
-            border: "1px solid #1e293b",
-            borderRadius: 8,
-            padding: "8px 20px",
-            textDecoration: "none",
-            transition: "border-color 0.2s, color 0.2s",
-          }}
-          onMouseEnter={e => {
-            (e.currentTarget as HTMLAnchorElement).style.borderColor = "#38bdf8";
-            (e.currentTarget as HTMLAnchorElement).style.color = "#38bdf8";
-          }}
-          onMouseLeave={e => {
-            (e.currentTarget as HTMLAnchorElement).style.borderColor = "#1e293b";
-            (e.currentTarget as HTMLAnchorElement).style.color = "#94a3b8";
-          }}
-        >
-          ⇄ Compare mechanisms
-        </Link>
       </div>
     </div>
   );

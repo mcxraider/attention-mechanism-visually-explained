@@ -77,6 +77,11 @@ export default function ComplexityCharts({
   const gpuKeys = Object.keys(GPU_SPECS) as GPUKey[];
   const isMemory = yAxis === "memory";
 
+  // Explicit decade ticks so log scale is visually clear
+  const LOG_TICKS_MEMORY  = [0.0001, 0.001, 0.01, 0.1, 1, 10, 100, 1000];
+  const LOG_TICKS_COMPUTE = [0.0001, 0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000, 100000];
+  const yTicks = isMemory ? LOG_TICKS_MEMORY : LOG_TICKS_COMPUTE;
+
   const controlLabelStyle: React.CSSProperties = {
     fontFamily: "'JetBrains Mono', monospace",
     fontSize: 10,
@@ -158,11 +163,21 @@ export default function ComplexityCharts({
           />
           <YAxis
             scale="log"
-            domain={["auto", "auto"]}
+            domain={[0.0001, isMemory ? 10000 : 1000000]}
             type="number"
+            ticks={yTicks}
             tickFormatter={v => fmt(v, isMemory)}
             tick={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, fill: "#475569" }}
-            width={70}
+            width={75}
+            label={{
+              value: "log scale",
+              angle: -90,
+              position: "insideLeft",
+              offset: 10,
+              fill: "#334155",
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: 9,
+            }}
           />
           <Tooltip content={<ChartTooltip isMemory={isMemory} />} />
           <Legend
