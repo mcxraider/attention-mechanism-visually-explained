@@ -81,8 +81,8 @@ export default function ComplexityCharts({
   const LOG_TICKS_MEMORY  = [0.0001, 0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000];
   const LOG_TICKS_COMPUTE = [0.0001, 0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000, 100000, 1000000];
   const yTicks = isMemory ? LOG_TICKS_MEMORY : LOG_TICKS_COMPUTE;
-  // X-axis ticks: clean decades = perfectly equal log spacing
-  const X_TICKS = [100, 1000, 10000, 100000];
+  // X-axis: linear scale so proportional distances are shown (10k→100k is 10× wider than 100→1k)
+  const X_TICKS = [0, 20000, 40000, 60000, 80000, 100000];
 
   const controlLabelStyle: React.CSSProperties = {
     fontFamily: "'JetBrains Mono', monospace",
@@ -149,8 +149,7 @@ export default function ComplexityCharts({
           <CartesianGrid stroke="#0d1f35" strokeDasharray="3 3" />
           <XAxis
             dataKey="N"
-            scale="log"
-            domain={[100, 100000]}
+            domain={[0, 100000]}
             ticks={X_TICKS}
             type="number"
             tickFormatter={v => formatNum(v)}
