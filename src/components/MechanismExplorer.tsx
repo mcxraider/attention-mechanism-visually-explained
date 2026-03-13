@@ -33,7 +33,7 @@ export default function MechanismExplorer() {
     const id = setInterval(() => {
       if (stepRef.current >= maxStep) {
         cycleCountRef.current += 1;
-        if (cycleCountRef.current >= 7) {
+        if (cycleCountRef.current >= 3) {
           clearInterval(id);
           setPlaying(false);
           setStep(0);

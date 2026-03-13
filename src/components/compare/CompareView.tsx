@@ -286,7 +286,7 @@ export default function CompareView() {
     const id = setInterval(() => {
       if (stepARef.current >= maxStep) {
         cycleCountARef.current += 1;
-        if (cycleCountARef.current >= 7) {
+        if (cycleCountARef.current >= 3) {
           clearInterval(id);
           setPlayingA(false);
           setStepA(0);
@@ -308,7 +308,7 @@ export default function CompareView() {
     const id = setInterval(() => {
       if (stepBRef.current >= maxStep) {
         cycleCountBRef.current += 1;
-        if (cycleCountBRef.current >= 7) {
+        if (cycleCountBRef.current >= 3) {
           clearInterval(id);
           setPlayingB(false);
           setStepB(0);
@@ -333,7 +333,7 @@ export default function CompareView() {
       const b = stepBRef.current;
       if (a >= maxA && b >= maxB) {
         syncCycleCountRef.current += 1;
-        if (syncCycleCountRef.current >= 7) {
+        if (syncCycleCountRef.current >= 3) {
           clearInterval(id);
           setSyncPlaying(false);
           setStepA(0);

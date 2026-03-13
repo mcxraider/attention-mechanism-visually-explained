@@ -1,3 +1,5 @@
+import { useState } from "react";
+import Link from "next/link";
 import type { Mechanism, MechanismKey } from "@/lib/mechanisms";
 import { levelColors, GRID } from "@/lib/theme";
 import AttentionGrid from "./AttentionGrid";
@@ -16,6 +18,7 @@ interface Props {
 }
 
 export default function GridPanel({ mech, active, step, playing, activeRow, onPrev, onNext, onSetStep, onTogglePlay }: Props) {
+  const [titleHovered, setTitleHovered] = useState(false);
   return (
     <div style={{
       background: "#080f1a",
@@ -29,9 +32,18 @@ export default function GridPanel({ mech, active, step, playing, activeRow, onPr
           Attention pattern
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 3, flexWrap: "wrap" }}>
-          <div style={{ fontSize: 26, fontWeight: 700, color: mech.color, letterSpacing: "-0.02em" }}>
+          <Link
+            href={`/mechanism/${active}`}
+            onMouseEnter={() => setTitleHovered(true)}
+            onMouseLeave={() => setTitleHovered(false)}
+            style={{
+              fontSize: 26, fontWeight: 700, color: mech.color, letterSpacing: "-0.02em",
+              textDecoration: titleHovered ? "underline" : "none",
+              fontFamily: "'Sora', sans-serif",
+            }}
+          >
             {mech.label}
-          </div>
+          </Link>
           <span style={{
             fontFamily: "'JetBrains Mono', monospace", fontSize: 12,
             background: levelColors[mech.level] + "22",
